@@ -1,0 +1,13 @@
+venv/
+*.pyc
+*.pyo
+*.mo
+*.pot
+__pycache__/
+*.log
+db.sqlite3
+media/
+staticfiles/
+.git
+.gitignore
+.env

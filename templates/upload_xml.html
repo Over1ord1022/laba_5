@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Загрузка XML</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body class="bg-dark text-white">
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <h1>Загрузка XML файла</h1>
+
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-3">
+                        <label for="{{ form.xml_file.id_for_label }}" class="form-label">{{ form.xml_file.label }}</label>
+                        {{ form.xml_file }}
+                        {% if form.xml_file.errors %}
+                        <div class="text-danger">
+                            {% for error in form.xml_file.errors %}
+                            <small>{{ error }}</small><br>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                        <div class="form-text">Поддерживаются только файлы в формате XML</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                    <a href="{% url 'student_form' %}" class="btn btn-secondary">Добавить оценку</a>
+                    <a href="{% url 'xml_files_list' %}" class="btn btn-warning">Все XML файлы</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
