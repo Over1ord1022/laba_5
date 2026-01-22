@@ -4,19 +4,22 @@ services:
   web:
     build: .
     command: >
-      sh -c "python manage.py migrate &&
+      sh -c "python manage.py migrate --noinput &&
+             python migrate_data.py &&
+             python manage.py collectstatic --noinput &&
              python manage.py runserver 0.0.0.0:6767"
     volumes:
       - .:/app
+      - media_volume:/app/media
     ports:
       - "6767:6767"
     env_file:
       - .env
     environment:
-      DOCKER_CONTAINER: "true"
       PYTHONUNBUFFERED: "1"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy  # Ждем, пока PostgreSQL будет готов
     networks:
       - app-network
 
@@ -28,14 +31,19 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5433:5432"
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=C --lc-ctype=C"
+    healthcheck:  # Healthcheck для проверки готовности БД
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     networks:
       - app-network
+
+volumes:
+  postgres_data:
+  media_volume:
 
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  postgres_data:

@@ -32,5 +32,6 @@ docker-compose up --build
 ```bash
 docker-compose exec web python manage.py migrate
 docker-compose exec web python manage.py createsuperuser
+docker-compose exec web python manage_data.py createsuperuser
 ```
-5. Откройте в браузере: http://localhost:8000
+5. Откройте в браузере: http://localhost:6767
